@@ -13,5 +13,5 @@ Build the project with dependency libraries using following maven build command
 
 Execute the program from the build jar which is located under target folder
 
-        java -jar target/NIOHTTPServer-1.0.jar
 
+	java -jar target/NIOHTTPServer-1.0-jar-with-dependencies.jar N2 -port 8000 -webroot /www/mysite/
