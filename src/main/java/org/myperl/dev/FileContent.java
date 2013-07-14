@@ -43,15 +43,23 @@ import java.nio.channels.FileChannel;
  */
 class FileContent implements Content {
 
-    private static File ROOT = new File("root");
+    private static File ROOT = new File(NIOHTTPServerConstant.DEFAULT_WEB_ROOT);
 
     private File fn;
 
     FileContent(URI uri) {
-        fn = new File(ROOT,
-                      uri.getPath()
-                      .replace('/',
-                               File.separatorChar));
+        String webRoot = System.getProperty(NIOHTTPServerConstant.WEB_ROOT);
+        if (webRoot != null && !webRoot.isEmpty()) {
+            fn = new File(webRoot,
+                    uri.getPath()
+                            .replace('/',
+                                    File.separatorChar));
+        } else {
+            fn = new File(ROOT,
+                    uri.getPath()
+                            .replace('/',
+                                    File.separatorChar));
+        }
     }
 
     private String type = null;

@@ -65,6 +65,7 @@ public abstract class Server {
         ssc = ServerSocketChannel.open();
         ssc.socket().setReuseAddress(true);
         ssc.socket().bind(new InetSocketAddress(port), backlog);
+
     }
 
     /*
@@ -106,7 +107,10 @@ public abstract class Server {
                 + "                 default:  " + PORT + "\n"
                 + "             -backlog backlog        backlog\n"
                 + "                 default:  " + BACKLOG + "\n"
-                + "             -secure                 encrypt with SSL/TLS");
+                + "             -secure                 encrypt with SSL/TLS\n"
+                + "             -webroot                web root folder"
+
+        );
         System.exit(1);
     }
 
@@ -132,7 +136,12 @@ public abstract class Server {
                 backlog = Integer.valueOf(args[++i]);
             } else if (args[i].equals("-secure")) {
                 secure = true;
-            } else {
+            } else if (args[i].equals("-webroot")) {
+                checkArgs(i, args.length);
+                System.setProperty(NIOHTTPServerConstant.WEB_ROOT,args[++i]);
+            }
+
+            else {
                 usage();
             }
         }

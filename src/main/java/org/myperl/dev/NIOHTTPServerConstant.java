@@ -1,11 +1,7 @@
 package org.myperl.dev;
 
-/**
- * Created with IntelliJ IDEA.
- * User: deep
- * Date: 7/14/13
- * Time: 5:53 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class NIOHTTPServerConstant {
+    public static final String DEFAULT_WEB_ROOT = "/tmp";
+    public static final String WEB_ROOT = "web.root";
 }
