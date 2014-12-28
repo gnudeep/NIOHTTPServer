@@ -87,7 +87,7 @@ class RequestHandler implements Handler {
         return false;
     }
 
-    // When parse is successfull, saves request and returns true
+    // When parse is successful,saves request and returns true
     //
     private boolean parse() throws IOException {
         try {

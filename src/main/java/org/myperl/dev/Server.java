@@ -33,13 +33,14 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.security.KeyStore;
 
 /**
  * The main server base class.
- * <P>
+ * <p/>
  * This class is responsible for setting up most of the server state
  * before the actual server subclasses take over.
  *
@@ -56,7 +57,7 @@ public abstract class Server {
     static private boolean SECURE = false;
 
     Server(int port, int backlog,
-            boolean secure) throws Exception {
+           boolean secure) throws Exception {
 
         if (secure) {
             createSSLContext();
@@ -78,8 +79,9 @@ public abstract class Server {
         char[] passphrase = "passphrase".toCharArray();
 
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream("testkeys"), passphrase);
-
+        try (InputStream inputStream = new FileInputStream("testkeys")) {
+            ks.load(inputStream, passphrase);
+        }
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, passphrase);
 
@@ -94,21 +96,21 @@ public abstract class Server {
 
     static private void usage() {
         System.out.println(
-            "Usage:  Server <type> [options]\n"
-                + "     type:\n"
-                + "             B1      Blocking/Single-threaded Server\n"
-                + "             BN      Blocking/Multi-threaded Server\n"
-                + "             BP      Blocking/Pooled-Thread Server\n"
-                + "             N1      Nonblocking/Single-threaded Server\n"
-                + "             N2      Nonblocking/Dual-threaded Server\n"
-                + "\n"
-                + "     options:\n"
-                + "             -port port              port number\n"
-                + "                 default:  " + PORT + "\n"
-                + "             -backlog backlog        backlog\n"
-                + "                 default:  " + BACKLOG + "\n"
-                + "             -secure                 encrypt with SSL/TLS\n"
-                + "             -webroot                web root folder"
+                "Usage:  Server <type> [options]\n"
+                        + "     type:\n"
+                        + "             B1      Blocking/Single-threaded Server\n"
+                        + "             BN      Blocking/Multi-threaded Server\n"
+                        + "             BP      Blocking/Pooled-Thread Server\n"
+                        + "             N1      Nonblocking/Single-threaded Server\n"
+                        + "             N2      Nonblocking/Dual-threaded Server\n"
+                        + "\n"
+                        + "     options:\n"
+                        + "             -port port              port number\n"
+                        + "                 default:  " + PORT + "\n"
+                        + "             -backlog backlog        backlog\n"
+                        + "                 default:  " + BACKLOG + "\n"
+                        + "             -secure                 encrypt with SSL/TLS\n"
+                        + "             -webroot                web root folder"
 
         );
         System.exit(1);
@@ -130,18 +132,16 @@ public abstract class Server {
         for (int i = 1; i < args.length; i++) {
             if (args[i].equals("-port")) {
                 checkArgs(i, args.length);
-                port = Integer.valueOf(args[++i]);
+                port = Integer.parseInt(args[++i]);
             } else if (args[i].equals("-backlog")) {
                 checkArgs(i, args.length);
-                backlog = Integer.valueOf(args[++i]);
+                backlog = Integer.parseInt(args[++i]);
             } else if (args[i].equals("-secure")) {
                 secure = true;
             } else if (args[i].equals("-webroot")) {
                 checkArgs(i, args.length);
-                System.setProperty(NIOHTTPServerConstant.WEB_ROOT,args[++i]);
-            }
-
-            else {
+                System.setProperty(NIOHTTPServerConstant.WEB_ROOT, args[++i]);
+            } else {
                 usage();
             }
         }
@@ -165,7 +165,7 @@ public abstract class Server {
 
     static private void checkArgs(int i, int len) {
         if ((i + 1) >= len) {
-           usage();
+            usage();
         }
     }
 
